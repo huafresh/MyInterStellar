@@ -1,0 +1,14 @@
+apply plugin: 'groovy'
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    compile gradleApi()
+    compile localGroovy()
+}
+
+sourceCompatibility = "7"
+targetCompatibility = "7"
+
+task temp{
+    println "task"
+}

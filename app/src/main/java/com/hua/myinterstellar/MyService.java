@@ -1,0 +1,52 @@
+package com.hua.myinterstellar;
+
+import android.app.Service;
+import android.content.Intent;
+import android.os.IBinder;
+
+import com.hua.myinterstellar_core.InterStellar;
+
+/**
+ * @author zhangsh
+ * @version V1.0
+ * @date 2020-03-01 11:10
+ */
+
+public class MyService extends Service {
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        try {
+            InterStellar.registerRemoteService(IApi.class, new IApi() {
+                @Override
+                public int testBasicType(int a, int b) {
+                    return a + b;
+                }
+
+                @Override
+                public String testParcelable(ManInfo manInfo) {
+                    return manInfo.getName() + ":" + manInfo.getAge();
+                }
+
+                @Override
+                public void testInOut(ManInfo manInfo) {
+                    manInfo.setName(manInfo.getName() + " append lisi");
+                    manInfo.setAge(manInfo.getAge() + 20);
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return super.onStartCommand(intent, flags, startId);
+    }
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
+}
