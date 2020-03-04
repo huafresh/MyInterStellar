@@ -3,8 +3,11 @@ package com.hua.myinterstellar;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
+import android.os.RemoteException;
 
+import com.hua.myinterstellar_core.ICallback;
 import com.hua.myinterstellar_core.InterStellar;
+import com.hua.myinterstellar_core.TestCallback;
 
 /**
  * @author zhangsh
@@ -38,6 +41,15 @@ public class MyService extends Service {
                     manInfo.setName(manInfo.getName() + " append lisi");
                     manInfo.setAge(manInfo.getAge() + 20);
                 }
+
+                @Override
+                public void testCallback(ICallback callback) {
+                    try {
+                        callback.onFail("哦豁， 失败了");
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                }
             });
         } catch (Exception e) {
             e.printStackTrace();
@@ -47,6 +59,14 @@ public class MyService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        return null;
+        return new MyBinder();
+    }
+
+    class MyBinder extends TestCallback.Stub{
+
+        @Override
+        public void testCallback(ICallback callback) throws RemoteException {
+            callback.onFail("testCallback failed");
+        }
     }
 }

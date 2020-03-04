@@ -19,6 +19,8 @@ public class StellarMethod implements Parcelable {
     private @Nullable
     Object[] args;
 
+    private static final int VAL_BASE_CALLBACK = -2;
+
     @SuppressWarnings("unchecked")
     public void readFromParcel(Parcel in) {
         this.methodName = in.readString();
@@ -26,9 +28,23 @@ public class StellarMethod implements Parcelable {
         if (count != -1 && args != null) {
             for (int i = 0; i < count; i++) {
                 Object arg = args[i];
-                Object argFromParcel = in.readValue(getClass().getClassLoader());
+                Object argFromParcel = null;
+                try {
+                    argFromParcel =  in.readValue(getClass().getClassLoader());
+                } catch (Exception e) {
+                    // 应该是ICallback导致的异常
+                    in.setDataPosition(in.dataPosition() - 4);
+                    int type = in.readInt();
+                    if (type == VAL_BASE_CALLBACK) {
+                        argFromParcel = ICallback.Stub.asInterface(in.readStrongBinder());
+                    } else {
+                        throw e;
+                    }
+                }
                 if (arg instanceof Outable) {
                     ((Outable) arg).copy(argFromParcel);
+                } else {
+                    args[i] = argFromParcel;
                 }
             }
         }
@@ -52,7 +68,12 @@ public class StellarMethod implements Parcelable {
         } else {
             dest.writeInt(args.length);
             for (Object arg : args) {
-                dest.writeValue(arg);
+                if (arg instanceof ICallback) {
+                    dest.writeInt(VAL_BASE_CALLBACK);
+                    dest.writeStrongBinder(((ICallback) arg).asBinder());
+                } else {
+                    dest.writeValue(arg);
+                }
             }
         }
     }
@@ -63,10 +84,23 @@ public class StellarMethod implements Parcelable {
         if (count != -1) {
             args = new Object[count];
             for (int i = 0; i < count; i++) {
-                Object arg = in.readValue(getClass().getClassLoader());
+                Object arg = null;
+                try {
+                    arg = in.readValue(getClass().getClassLoader());
+                } catch (Exception e) {
+                    // 应该是ICallback导致的异常
+                    in.setDataPosition(in.dataPosition() - 4);
+                    int type = in.readInt();
+                    if (type == VAL_BASE_CALLBACK) {
+                        arg = ICallback.Stub.asInterface(in.readStrongBinder());
+                    } else {
+                        throw e;
+                    }
+                }
                 args[i] = arg;
             }
         }
+        Log.d("@@@hua", "恢复StellarMethod : " + this);
     }
 
     public static final Creator<StellarMethod> CREATOR = new Creator<StellarMethod>() {

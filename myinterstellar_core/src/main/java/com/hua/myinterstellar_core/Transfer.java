@@ -50,12 +50,16 @@ class Transfer extends ITransfer.Stub {
         return argClass;
     }
 
-    private Class stripClass(Class wrapClass) {
+    private Class stripClass(Class<?> wrapClass) {
         if (wrapClass.isPrimitive()) {
             return wrapClass;
         }
         if (wrapClass == Integer.class) {
             return int.class;
+        }
+        if (ICallback.class.isAssignableFrom(wrapClass)) {
+            Log.d("@@@hua", "还原参数");
+            return ICallback.class;
         }
         return wrapClass;
     }

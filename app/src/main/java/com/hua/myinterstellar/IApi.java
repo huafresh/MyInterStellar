@@ -1,5 +1,7 @@
 package com.hua.myinterstellar;
 
+import com.hua.myinterstellar_core.ICallback;
+
 /**
  * @author zhangsh
  * @version V1.0
@@ -13,4 +15,6 @@ public interface IApi {
     String testParcelable(ManInfo manInfo);
 
     void testInOut(ManInfo manInfo);
+
+    void testCallback(ICallback callback);
 }

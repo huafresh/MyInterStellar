@@ -1,8 +1,6 @@
 package com.hua.myinterstellar_core;
 
-import android.os.Parcelable;
 import android.os.RemoteException;
-import android.util.Log;
 
 import java.lang.reflect.Method;
 
@@ -24,6 +22,7 @@ class InvocationHandler implements java.lang.reflect.InvocationHandler {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        checkInterface(method);
         StellarMethod stellarMethod = new StellarMethod(method.getName(), args);
         Reply reply = null;
         try {
@@ -36,5 +35,17 @@ class InvocationHandler implements java.lang.reflect.InvocationHandler {
             return reply.getResult();
         }
         throw new StellarException("调用远程方法 " + method.getName() + " 失败，原因：" + reply.getErrorMsg());
+    }
+
+    private void checkInterface(Method method) {
+        Class<?>[] parameterTypes = method.getParameterTypes();
+        for (Class<?> parameterType : parameterTypes) {
+            if (ICallback.class.isAssignableFrom(parameterType) &&
+                    ICallback.class != parameterType) {
+                throw new StellarException("如果接口需要定义callback，只能用" +
+                        ICallback.class.getSimpleName() + ", 不能用其子类，因为子类无法在远程进程恢复实例。" +
+                        "不过，client端传递参数时倒是可以传子类。");
+            }
+        }
     }
 }

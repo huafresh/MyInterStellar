@@ -1,14 +1,24 @@
 package com.hua.myinterstellar;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.net.MailTo;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.os.RemoteException;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
 
+import com.hua.myinterstellar_core.BaseCallback;
+import com.hua.myinterstellar_core.ICallback;
 import com.hua.myinterstellar_core.InterStellar;
+import com.hua.myinterstellar_core.TestCallback;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -34,6 +44,57 @@ public class MainActivity extends AppCompatActivity {
                 ManInfo info = new ManInfo("zhangsan", 10);
                 api.testInOut(info);
                 Log.d("@@@hua", "inout: " + info);
+
+                api.testCallback(new BaseCallback() {
+                    @Override
+                    public void onSucceed(Bundle result) {
+
+                    }
+
+                    @Override
+                    public void onFailed(String errorMsg) {
+                        Toast.makeText(MainActivity.this, errorMsg, Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
+
+        findViewById(R.id.bind).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bindService(new Intent(MainActivity.this, MyService.class),
+                        new ServiceConnection() {
+                            @Override
+                            public void onServiceConnected(ComponentName name, IBinder service) {
+                                Log.d("@@@hua", "onServiceConnected");
+                                TestCallback testCallback = TestCallback.Stub.asInterface(service);
+                                try {
+                                    testCallback.testCallback(new ICallback.Stub() {
+                                        @Override
+                                        public void onSuccess(Bundle result) throws RemoteException {
+
+                                        }
+
+                                        @Override
+                                        public void onFail(final String errorMsg) throws RemoteException {
+                                            runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    Toast.makeText(MainActivity.this, errorMsg, Toast.LENGTH_SHORT).show();
+                                                }
+                                            });
+                                        }
+                                    });
+                                } catch (RemoteException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                            @Override
+                            public void onServiceDisconnected(ComponentName name) {
+
+                            }
+                        }, BIND_AUTO_CREATE);
             }
         });
 
@@ -44,5 +105,8 @@ public class MainActivity extends AppCompatActivity {
         Log.d("@@@hua", "b2 = " + b2);
         Log.d("@@@hua", "b3 = " + b3);
 
+
+
     }
+
 }
