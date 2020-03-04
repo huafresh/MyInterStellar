@@ -7,7 +7,6 @@ import android.os.RemoteException;
 
 import com.hua.myinterstellar_core.ICallback;
 import com.hua.myinterstellar_core.InterStellar;
-import com.hua.myinterstellar_core.TestCallback;
 
 /**
  * @author zhangsh
@@ -59,14 +58,7 @@ public class MyService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        return new MyBinder();
+        return null;
     }
 
-    class MyBinder extends TestCallback.Stub{
-
-        @Override
-        public void testCallback(ICallback callback) throws RemoteException {
-            callback.onFail("testCallback failed");
-        }
-    }
 }

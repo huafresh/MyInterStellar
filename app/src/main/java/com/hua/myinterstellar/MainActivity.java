@@ -18,7 +18,6 @@ import android.widget.Toast;
 import com.hua.myinterstellar_core.BaseCallback;
 import com.hua.myinterstellar_core.ICallback;
 import com.hua.myinterstellar_core.InterStellar;
-import com.hua.myinterstellar_core.TestCallback;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -62,39 +61,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.bind).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                bindService(new Intent(MainActivity.this, MyService.class),
-                        new ServiceConnection() {
-                            @Override
-                            public void onServiceConnected(ComponentName name, IBinder service) {
-                                Log.d("@@@hua", "onServiceConnected");
-                                TestCallback testCallback = TestCallback.Stub.asInterface(service);
-                                try {
-                                    testCallback.testCallback(new ICallback.Stub() {
-                                        @Override
-                                        public void onSuccess(Bundle result) throws RemoteException {
 
-                                        }
-
-                                        @Override
-                                        public void onFail(final String errorMsg) throws RemoteException {
-                                            runOnUiThread(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    Toast.makeText(MainActivity.this, errorMsg, Toast.LENGTH_SHORT).show();
-                                                }
-                                            });
-                                        }
-                                    });
-                                } catch (RemoteException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-
-                            @Override
-                            public void onServiceDisconnected(ComponentName name) {
-
-                            }
-                        }, BIND_AUTO_CREATE);
             }
         });
 
