@@ -24,7 +24,7 @@ public interface IApi {
 以上是java代码，并非写在aidl中，可见和一般的java接口完全无异，其中ManInfo是实现了
 Parcelable的一般对象，ICallback是框架提供的Callback类，如果要以回调的形式接收
 结果，必须用框架提供的这个ICallback类，不能是其子类或者其他自定义的接口。这是框架
-实现原理导致的，具体可以参考源码。
+实现原理导致的，具体可以参考源码。<br/>
 2、注册服务接口的实现：
 ```
 InterStellar.registerRemoteService(IApi.class, new IApi() {
