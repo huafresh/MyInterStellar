@@ -1,5 +1,4 @@
 apply plugin: 'com.android.application'
-apply plugin: com.hua.myinterstellar_plugin.Main
 
 android {
     compileSdkVersion 29
@@ -20,8 +19,11 @@ android {
     }
 }
 
+apply plugin: com.hua.myinterstellar_plugin.Main
+
+
 myStellarConfig {
-    setProcessName("main_process")
+    setProcessName(":main_process")
 }
 
 dependencies {

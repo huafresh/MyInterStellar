@@ -1,9 +1,16 @@
 apply plugin: 'groovy'
 
+repositories {
+    google()
+    jcenter()
+    mavenCentral()
+}
+
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     compile gradleApi()
     compile localGroovy()
+    compile 'com.android.tools.build:gradle:3.4.1'
 }
 
 sourceCompatibility = "7"
