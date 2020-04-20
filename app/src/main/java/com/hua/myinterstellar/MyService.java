@@ -4,8 +4,10 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.os.RemoteException;
+import android.util.Log;
 
 import com.hua.myinterstellar_core.ICallback;
+import com.hua.myinterstellar_core.ITestOneWay;
 import com.hua.myinterstellar_core.InterStellar;
 
 /**
@@ -27,6 +29,11 @@ public class MyService extends Service {
             InterStellar.registerRemoteService(IApi.class, new IApi() {
                 @Override
                 public int testBasicType(int a, int b) {
+                    try {
+                        Thread.sleep(6000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                     return a + b;
                 }
 
@@ -58,7 +65,17 @@ public class MyService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        return null;
+        return new ITestOneWay.Stub() {
+            @Override
+            public void invoke(String name) throws RemoteException {
+                try {
+                    Thread.sleep(10000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                Log.d("@@@hua", "test one way: " + name);
+            }
+        };
     }
 
 }

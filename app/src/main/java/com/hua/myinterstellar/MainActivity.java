@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.hua.myinterstellar_core.BaseCallback;
 import com.hua.myinterstellar_core.ICallback;
+import com.hua.myinterstellar_core.ITestOneWay;
 import com.hua.myinterstellar_core.InterStellar;
 
 public class MainActivity extends AppCompatActivity {
@@ -61,7 +62,23 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.bind).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                bindService(new Intent(MainActivity.this, MyService.class), new ServiceConnection() {
+                    @Override
+                    public void onServiceConnected(ComponentName name, IBinder service) {
+                        ITestOneWay testOneWay = ITestOneWay.Stub.asInterface(service);
+                        try {
+                            testOneWay.invoke("hello");
+                        } catch (RemoteException e) {
+                            e.printStackTrace();
+                        }
+                        Log.d("@@@hua", "call one way finished");
+                    }
 
+                    @Override
+                    public void onServiceDisconnected(ComponentName name) {
+
+                    }
+                }, BIND_AUTO_CREATE);
             }
         });
 
@@ -71,7 +88,6 @@ public class MainActivity extends AppCompatActivity {
         Log.d("@@@hua", "b1 = " + b1);
         Log.d("@@@hua", "b2 = " + b2);
         Log.d("@@@hua", "b3 = " + b3);
-
 
 
     }
